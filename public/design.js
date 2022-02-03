@@ -3,18 +3,21 @@ import Card  from "./components/Cards.js";
 import RoundGame from "./components/round.js";
 import CardsData from "./components/cardData.js";
 import Winner from "./components/findWinner.js";
+import GuessPop from "./components/guessPop.js";
 
 const ContainerPlayers=document.querySelector('.players')
 const PLAYGROUND=document.querySelector('.playground')
 const SPACE =document.querySelector('.space')
 let trumpColorDiv=document.querySelector('.trump-color')
+let buttonsGuess=document.querySelectorAll('.btn-guess-value')
+let guessPop=document.querySelector('.guess-pop')
 let currentplayer=document.querySelector('.currentPlayer')
 var socket = io();
 let players = []
 let RoundDiv=document.querySelector('.round-num')
-
+let guessBtnsContainer=document.querySelector('.guess-btns')
 const cards=CardsData.infoCards()
-
+const guess=new GuessPop(guessPop,'show-off')
 function addEventToPlay(){
     let cardsEvents=document.querySelectorAll('.card-item')
 cardsEvents.forEach((element)=>{
@@ -24,12 +27,36 @@ element.addEventListener("click",()=>{pushCardToTheSpace(element)},{once:true})
 
 
 
+buttonsGuess.forEach((element)=>{
+element.addEventListener('click',(ev)=>{
+const value= guess.getValue(ev)
+localStorage.setItem('guess',value) ;
+console.log(value)
+guess.disappearPop()
+socket.emit('add-guess',{name:localStorage.getItem('player-name') , guess:localStorage.getItem('guess')})
+})
+})
 // function removeEventToPlay(){
 // cardsEvents.forEach((element)=>{
 // element.removeEventListener('click',pushCardToTheSpace)
 // })
-
 // }
+
+
+socket.on('add-guess',(player)=>{
+  console.log(player)
+for (let y = 0; y < players.length; y++) {
+  console.log(players[y].name , player.name)
+  if(players[y].name===player.name){
+    players[y].guess=player.guess
+    console.log(players[y],'............')
+  }
+}
+console.log(players)
+let playerCardRefresher=new PlayerCard()
+playerCardRefresher.refreshPlayersCard(ContainerPlayers,players)
+})
+
 
 
 const roundGame = new RoundGame(10,cards,PLAYGROUND,SPACE);
@@ -87,6 +114,7 @@ function joinGame(){
   let name=prompt('Enter the Name')
   if(!!name){
     localStorage.setItem('player-name',name)
+    currentplayer.textContent=name;
   socket.emit('join-game',name)   
   }
 }
@@ -97,7 +125,7 @@ document.getElementById("startGameId").addEventListener('click',startRound)
 
 function pushCardToTheSpace(div){
 div.style.display="none"
-div.data={...div.data,player:localStorage.getItem('player-name')}
+div.data={...div.data,name:localStorage.getItem('player-name')}
 socket.emit('push-card-in-space',div.data)
 }
 
@@ -105,6 +133,7 @@ socket.emit('push-card-in-space',div.data)
 socket.on("start-game",(obj)=>{
 if(obj.status){
     roundGame.start()
+    guess.display()
     addEventToPlay()
     changeTrumpColor()
 }
@@ -112,8 +141,10 @@ if(obj.status){
 
 
 socket.on('turn-round',(data)=>{
-console.log(data)
-roundGame.start()
+console.log(data,'turn round')
+players=data;
+roundGame.start();
+guess.display();
 addEventToPlay()
 changeTrumpColor()
 let playerCardRefresher=new PlayerCard()
@@ -156,17 +187,19 @@ spaceCards.push(element.data)
 })
 
 let winnerRound= Winner.findWinner(CardsData.currentColor,spaceCards)
+console.log(winnerRound)
 
-players.forEach((player)=>{
-if(player.name===winnerRound.name){
-player.score+=10
+for (let y = 0; y < players.length; y++) {
+    
+    if(players[y].name===winnerRound.name){
+        players[y].score+=10
+    }else{
+    players[y].score-=10    
+    }
 }
-})
-
-
-
-socket.emit('turn-round','turn to next round')
-
+setTimeout(() => {
+socket.emit('turn-round',players)    
+},2000);
 }
 
 

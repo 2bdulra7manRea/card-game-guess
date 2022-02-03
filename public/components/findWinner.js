@@ -21,10 +21,10 @@ let largeNumber=0
 
 let step1=this.findWinnerColor(trumpColor,data)
 if(step1.length===0){
-let step1=this.findWinnerColor(data[0].color,data)
-let p=this.findLargeNumber(step1)
-return p1
-
+console.log('no one has trump color')
+let step2=this.findWinnerColor(data[0].color,data)
+let p=this.findLargeNumber(step2)
+return p
 }else{
 
 let p2=this.findLargeNumber(step1)
@@ -46,7 +46,13 @@ return x[0];
 
 
 static findWinnerColor(color,data){
-return data.filter((value,index)=> {return value.color===color})
+    console.log(color , 'inside finder winner color')
+const d= data.filter((value,index)=> {return value.color===color})
+
+console.log(d , ' players has same color of trump');
+
+
+return d
 }
 
 

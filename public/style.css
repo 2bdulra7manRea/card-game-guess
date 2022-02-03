@@ -81,3 +81,30 @@
 .disappear{
     display: none;
 }
+
+.guess-pop{
+    width:500px;
+    padding:30px;
+    background-color: crimson;
+    position: fixed;
+    left:30%;
+    top:30%;
+    color: white;
+}
+
+
+.guess-pop .guess-btns{
+    width:90%;
+    padding:10px;
+}
+.guess-btns button {
+    padding:10px;
+    background-color: rgb(168, 14, 45);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.show-off{
+    display: none;
+}
