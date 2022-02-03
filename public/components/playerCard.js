@@ -63,6 +63,15 @@ this.create(container,playerDetails.name, playerDetails.guess, playerDetails.tur
 }
 
 
+editGuessValuePlayer(players,player){
+    for (let y = 0; y < players.length; y++) {
+        if(players[y].name===player.name){
+          players[y].guess=player.guess
+        }
+      }
+}
+
+
 }
 
 

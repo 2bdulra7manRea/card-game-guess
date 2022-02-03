@@ -92,7 +92,6 @@
     color: white;
 }
 
-
 .guess-pop .guess-btns{
     width:90%;
     padding:10px;
@@ -108,3 +107,8 @@
 .show-off{
     display: none;
 }
+
+.winnerCard{
+box-shadow:2px 2px 2px rgb(255, 255, 145) , -2px -2px 2px rgb(255, 255, 95) ;
+}
+
