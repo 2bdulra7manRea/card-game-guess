@@ -35,15 +35,17 @@ create(container,name,guess,turn,score=0){
     div.setAttribute('class','player-card')
     let p = document.createElement('p');
     p.textContent=name;
-    let p2 = document.createElement('p');
-    p2.textContent=guess;
+
+    let p2=document.createElement('p');
+    p2.textContent=score
     let p3=document.createElement('p');
-    p3.textContent=turn
-    let p4=document.createElement('p');
-    p4.textContent=score
+    p3.textContent="guess : "
+    p3.style.color='gray'
+    let p4 = document.createElement('p');
+    p4.textContent=guess;
     div.appendChild(p);
-    div.appendChild(p3);
     div.appendChild(p2);
+    div.appendChild(p3);
     div.appendChild(p4);
     container.appendChild(div)
 }
