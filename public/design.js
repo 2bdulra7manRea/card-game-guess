@@ -147,6 +147,7 @@ roundGame.start();
 guess.display();
 addEventToPlay()
 changeTrumpColor()
+RoundDiv.textContent=roundGame.currentRound;
 let playerCardRefresher=new PlayerCard()
 playerCardRefresher.refreshPlayersCard(ContainerPlayers,players)
 })
