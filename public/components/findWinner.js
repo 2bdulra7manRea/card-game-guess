@@ -57,6 +57,15 @@ return d
 
 
 
+static markWinner(winner , container , classNameStyle){
+container.childNodes.forEach((element)=>{
+console.log(element.data)
+if(element.data.name===winner.name && element.data.color===winner.color){
+element.classList.add(classNameStyle)
+}
+})
+}
+
 }
 
 
