@@ -4,6 +4,12 @@ import RoundGame from "./components/round.js";
 import CardsData from "./components/cardData.js";
 import Winner from "./components/findWinner.js";
 import GuessPop from "./components/guessPop.js";
+import Player from "./components/player.js";
+import DomEvents from "./components/DomEvents.js";
+import Turn from "./components/turnGame.js";
+import Game from "./components/Game.js";
+import Color from "./components/Color.js";
+const ROUND_NUMBERS=2;
 const ContainerPlayers=document.querySelector('.players')
 const PLAYGROUND=document.querySelector('.playground')
 const SPACE =document.querySelector('.space')
@@ -14,25 +20,24 @@ let currentplayer=document.querySelector('.currentPlayer')
 var socket = io();
 let players = []
 let RoundDiv=document.querySelector('.round-num')
+let startButtonGame=document.getElementById("startGameId");
 let guessBtnsContainer=document.querySelector('.guess-btns')
 const cards=CardsData.infoCards()
 const guess=new GuessPop(guessPop,'show-off')
-const roundGame = new RoundGame(10,cards,PLAYGROUND,SPACE);
+const roundGame = new RoundGame(ROUND_NUMBERS,cards,PLAYGROUND,SPACE);
+document.getElementById("joinGameId").addEventListener('click',(ev)=>Game.join(ev,socket,currentplayer))
+startButtonGame.addEventListener('click',(ev)=>Game.start(ev,players,socket))
+let index=0;
 
-
-
-function addEventToPlay(){
-let cardsEvents=document.querySelectorAll('.card-item')
-cardsEvents.forEach((element)=>{
-element.addEventListener("click",()=>{pushCardToTheSpace(element)},{once:true}) 
+socket.on("user-connected",(payload)=>{
 })
-}
 
 buttonsGuess.forEach((element)=>{
+
+
 element.addEventListener('click',(ev)=>{
 const value= guess.getValue(ev)
 localStorage.setItem('guess',value) ;
-console.log(value)
 guess.disappearPop()
 socket.emit('add-guess',{name:localStorage.getItem('player-name') , guess:localStorage.getItem('guess')})
 })
@@ -44,33 +49,45 @@ playerCardRefresher.editGuessValuePlayer(players,player)
 playerCardRefresher.refreshPlayersCard(ContainerPlayers,players)
 })
 
-function startRound(ev){
-socket.emit('start-game',{status:true})
-ev.target.classList.add('disappear');
-RoundDiv.textContent=1;
+socket.on('players-switch',(nextPlayer)=>{
+if(nextPlayer.name===localStorage.getItem('player-name')){
+ console.log('add event') 
+DomEvents.add('.play-ground-card',pushCardToTheSpace,{once:true},'active-card')
+}else{
+console.log('remove-event')
+DomEvents.remove('.play-ground-card',pushCardToTheSpace,{once:true},'active-card')
 }
-
-
-function changeTrumpColor(){
-let color=CardsData.trumpColor()
-socket.emit('trump-color',color)
-}
-
-socket.on('trump-color',(color)=>{
-trumpColorDiv.textContent='turmp color : '+ color;
-trumpColorDiv.style.color=color
 })
 
-function switchPlayer(){
-// handling events 
-// handling name of player
-}
 
+
+
+socket.on('trump-color',(color)=>{
+Color.assign(trumpColorDiv,color)
+})
+
+socket.on('join-game',(name)=>{
+  if(players.length===0){
+    players.push({name:name , play:false ,host:true,score:0 , turn:0 , guess:0})
+  }else{
+   players.push({name:name , play:false ,host:false,score:0 , turn:0 , guess:0}) 
+  }
+let playercard= new PlayerCard(name,0,'not-yet')
+playercard.display(ContainerPlayers)
+})
+
+
+//  ? ----------------------------------------All Logic-------------------------------------
+
+
+
+// (3)
 function checkTurnIsDone(){
-const flag=players.every((player)=> player.played)
-console.log(players)
+// console.log('[check-for-done]')  
+  // ! work at each push of card
+const flag=Player.allPlayersPlayed(players)
 if(flag){
-let winnerCard=findWinnerForTurn()
+let winnerCard=Turn.findWinner(trumpColorDiv.style.color)
 Winner.markWinner(winnerCard,SPACE,'winnerCard')
 setTimeout(()=>{
 startNewTurn()
@@ -81,28 +98,25 @@ return true;
 }
 }
 
+// (4)
 function startNewTurn(){
-SPACE.textContent=''
-for (let y = 0; y < players.length; y++) {
-  players[y].played=false
-}
-const childNodes=PLAYGROUND.childNodes
-if(childNodes.length===0){
-socket.emit('start-game',{status:true})
-}
-}
 
-function joinGame(){
-  let name=prompt('Enter the Name')
-  if(!!name){
-    localStorage.setItem('player-name',name)
-    currentplayer.textContent=name;
-  socket.emit('join-game',name)   
+  // ! work when all players in turn done
+SPACE.textContent=''
+Player.restartPlayers(players)
+const childNodes=PLAYGROUND.childNodes
+
+if(childNodes.length===0){
+  if(roundGame.currentRound<ROUND_NUMBERS){
+    if(players[0].name===localStorage.getItem('player-name')){
+      console.log('host')
+    socket.emit('start-game',players)
+    }
+  }else{
+    console.log('The Game is end')
   }
 }
-
-document.getElementById("joinGameId").addEventListener('click',joinGame)
-document.getElementById("startGameId").addEventListener('click',startRound)
+}
 
 function pushCardToTheSpace(div){
 div.data={...div.data,name:localStorage.getItem('player-name'),played:true}
@@ -110,82 +124,55 @@ socket.emit('push-card-in-space',div.data)
 div.remove()
 }
 
-socket.on("start-game",(obj)=>{
-    roundGame.start()
+
+// (1)
+socket.on("start-game",(dataSocket)=>{
+
+  if(!!dataSocket && !!dataSocket.players){
+  Player.restartPlayers(dataSocket.players)
+  startButtonGame.classList.add('disappear');
+  }
+    roundGame.start();
+    RoundDiv.textContent=roundGame.currentRound;
     guess.display()
-    addEventToPlay()
-    changeTrumpColor()
-    startNewTurn()
+    Color.generate(socket);
+    findWhoWillPlayNext()
 })
 
-socket.on('turn-round',(data)=>{
-console.log(data,'turn round')
-players=data;
-roundGame.start();
-guess.display();
-addEventToPlay()
-changeTrumpColor()
-startNewTurn()
-RoundDiv.textContent=roundGame.currentRound;
-let playerCardRefresher=new PlayerCard()
-playerCardRefresher.refreshPlayersCard(ContainerPlayers,players)
-})
 
-socket.on('join-game',(name)=>{
-players.push({name:name , play:false ,score:0 , turn:0 , guess:0})
-let playercard= new PlayerCard(name,0,'not-yet')
-playercard.display(ContainerPlayers)
-})
+function findWhoWillPlayNext(){
+if(players[0].name===localStorage.getItem('player-name')){
+let nextPlayer=Player.switchPlayersFollow(players)
+if(!!nextPlayer){
+socket.emit('players-switch',nextPlayer)  
+}
+}
+}
 
-socket.on("user-connected",(payload)=>{
 
-console.log(payload)
 
-})
 
+
+
+
+
+
+//(2)
 socket.on('push-card-in-space',(body)=>{
-
+console.log('...push..')
 let card= new Card(body,false,SPACE)
 card.display()
 card.addClass('space-card');
-
-for (let v = 0; v < players.length; v++) {
-  if(players[v].name===body.name){
-    players[v].played=body.played
-  }
-}
-
+Player.isPlayed(players,body)
 setTimeout(()=>{
+findWhoWillPlayNext();
 checkTurnIsDone()
+// console.log('[switch]...')
 },3000)
 })
 
-function findWinnerForTurn(){
-  let spaceCards=[];
-  let cardsOfRound=document.querySelectorAll('.space-card');
-  cardsOfRound.forEach((element)=>{
-  spaceCards.push(element.data)
-  })  
-  let winnerRound= Winner.findWinner(CardsData.currentColor,spaceCards)
-  return winnerRound;
-}
-
-function checkForWinnerInRound(){
-
-let winnerRound=findWinnerForTurn()
-
-for (let y = 0; y < players.length; y++) {
-    
-    if(players[y].name===winnerRound.name){
-        players[y].score+=10
-    }else{
-    players[y].score-=10    
-    }
-}
-setTimeout(() => {
-socket.emit('turn-round',players)    
-},2000);
-}
 
 
 
+
+// todo host + dict
