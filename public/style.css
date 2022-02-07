@@ -4,18 +4,34 @@
     box-sizing: border-box;
 }
 
+body::-webkit-scrollbar{
+    color: crimson;
+    background: crimson;
+}
+
+body::-webkit-scrollbar-thumb{
+    background:rgb(216, 95, 119);
+    border-radius:20px;
+}
+
+.container{
+    padding:20px;
+    width:100%;
+    display: flex;
+    background-image: linear-gradient(to left,crimson,rgb(119, 15, 36));
+}
 .card-item{
-    width:150px;
-    height:180px;
+    width:100px;
+    height:150px;
     border-radius:20px;
     display: flex;
     flex-direction: column;
     margin:5px;
     padding:10px;
-    background-color: white;
-    cursor: pointer;
+    background-color: rgb(246, 246, 246);
+    cursor:not-allowed;
     transition:1s ease-in-out;
-    box-shadow:2px 2px 3px gainsboro ,-2px -2px 3px gainsboro;
+    box-shadow:2px 2px 2px gainsboro ,-2px -2px 2px gainsboro;
 }
 
 .card-item p {
@@ -23,7 +39,7 @@
 }
 
 .card-item span {
-    font-size:80px;
+    font-size:70px;
     text-align: center;
 }
 
@@ -42,15 +58,36 @@
     box-shadow:1px 1px 3px gainsboro;
 }
 
+.space .card-item {
+
+    background-color: white;
+}
+
+
+
+.btns-box{
+
+}
+
 .btn-start-game{
+    width:100%;
     padding:10px;
-    background-color:orangered;
+    background-color:rgb(216, 95, 119);
     color: white;
     border:none;
+    border-radius:10px;
+}
+
+
+
+.header-main{
+    padding:10px;
+    display: flex;
+    justify-content: space-around;
 }
 
 .btn-start-game:hover{
-    background-color: rgb(255, 144, 103);
+    background-color: rgb(218, 60, 92);
 }
 
 .side {
@@ -61,12 +98,8 @@
     width:80%;
     height:100vh;
     padding:10px;
-    border:2px solid orangered;
 }
-.container{
-    width:100%;
-    display: flex;
-}
+
 
 .player-card{
     width:100%;
@@ -109,6 +142,12 @@
 }
 
 .winnerCard{
-box-shadow:2px 2px 2px rgb(255, 255, 145) , -2px -2px 2px rgb(255, 255, 95) ;
+box-shadow:2px 2px 2px rgb(255, 255, 145) , -2px -2px 3px rgb(255, 255, 95) ;
 }
 
+
+.active-card{
+cursor: pointer;    
+background-color: white;
+box-shadow:2px 2px 2px rgb(255, 255, 69) , -2px -2px 2px rgb(255, 255, 95) ;
+}

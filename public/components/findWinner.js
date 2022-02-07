@@ -21,7 +21,7 @@ let largeNumber=0
 
 let step1=this.findWinnerColor(trumpColor,data)
 if(step1.length===0){
-console.log('no one has trump color')
+
 let step2=this.findWinnerColor(data[0].color,data)
 let p=this.findLargeNumber(step2)
 return p
@@ -46,20 +46,14 @@ return x[0];
 
 
 static findWinnerColor(color,data){
-    console.log(color , 'inside finder winner color')
 const d= data.filter((value,index)=> {return value.color===color})
-
-console.log(d , ' players has same color of trump');
-
-
 return d
 }
 
 
 
-static markWinner(winner , container , classNameStyle){
+static markWinner(winner , container , classNameStyle){ 
 container.childNodes.forEach((element)=>{
-console.log(element.data)
 if(element.data.name===winner.name && element.data.color===winner.color){
 element.classList.add(classNameStyle)
 }

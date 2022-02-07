@@ -8,7 +8,7 @@ class CardsData{
 static values=['1','2','3','4','5','6','7','8','9','10','11','12','13']
 static colors=['red','green','blue','orange']
 static shape="♥"
-static currentColor='red';
+static currentColor='unknown';
 
 static refreshCards(){
 return this.colors.flatMap((color)=>{

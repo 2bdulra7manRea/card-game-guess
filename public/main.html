@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Games</title>
+    <title>Card Game</title>
     <link rel="stylesheet" href="style.css">
     <script src="/socket.io/socket.io.js"></script>
 </head>
@@ -27,18 +27,16 @@
 
 
 <div class="side">
-<button id="winner" class="btn-start-game">winner</button>
 <div>
-    <h1>Round : <span class="round-num" ></span> </h1>
+    <h5>Round : <span class="round-num" ></span> </h5>
 </div>    
-<div style="display: flex; justify-content: space-around;">
+<div  class="btns-box">
     <button id="startGameId" class="btn-start-game" >start game</button>
-
-    <div class="btn-start-game">
-        <p class="currentPlayer"></p>
-    </div>
     <button id="joinGameId" class="btn-start-game" >join game</button>
 </div>
+
+
+
 <div class="players">
 
 </div>
@@ -48,12 +46,16 @@
 
 
 <div class="main">
-<div class="trump">
+<div class="header-main">
+
+<h1 class="currentPlayer" style="color: white;"></h1>
+
+
 <p class="trump-color"></p>
-
-<progress  value="5"  max="10" ></progress>
-
 </div>
+
+
+
 <div class="space">
 
 

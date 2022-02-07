@@ -45,6 +45,11 @@ client.on('trump-color',(body)=>{
         client.on('add-guess',(body)=>{
             io.emit('add-guess',body)
             })
+            client.on('players-switch',(body)=>{
+                io.emit('players-switch',body)
+                })
+
+            
 
 })
 
