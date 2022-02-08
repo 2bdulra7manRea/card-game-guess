@@ -11,10 +11,46 @@ class Winner{
 // if not found : find the first card color 
 // the found large number of it is the winner
 
+static getPointsScore(players){
+
+console.log(players,'............')
+
+for (let i = 0; i < players.length; i++) {
+console.log(players[i]);
+
+if(Number(players[i].guess)===players[i].taken){
+    players[i].score+=20;
+    players[i].taken=0;
+    players[i].guess=0;
+// get points
+}else{
+    players[i].score-=10
+    players[i].taken=0;
+    players[i].guess=0;
+// remove points
+}    
+}
+}
+
+static arrangPlayers(players){
+
+let arrangedPlayers=Array.from(players).sort((a,b)=>{
+return  b.score-a.score
+})
+console.log(arrangedPlayers)
+}
 
 
+static assignPointsOfTaken(players,player){
+for (let i = 0; i < players.length; i++) {
+    if(players[i].name===player.name){
+        players[i].taken+=1;
+        return;
+    }
+}
 
 
+}
 
 static findWinner(trumpColor,data){
 let largeNumber=0
@@ -59,6 +95,10 @@ element.classList.add(classNameStyle)
 }
 })
 }
+
+
+
+
 
 }
 

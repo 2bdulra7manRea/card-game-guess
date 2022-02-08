@@ -9,7 +9,7 @@ import DomEvents from "./components/DomEvents.js";
 import Turn from "./components/turnGame.js";
 import Game from "./components/Game.js";
 import Color from "./components/Color.js";
-const ROUND_NUMBERS=2;
+const ROUND_NUMBERS=5;
 const ContainerPlayers=document.querySelector('.players')
 const PLAYGROUND=document.querySelector('.playground')
 const SPACE =document.querySelector('.space')
@@ -22,13 +22,14 @@ let players = []
 let RoundDiv=document.querySelector('.round-num')
 let startButtonGame=document.getElementById("startGameId");
 let guessBtnsContainer=document.querySelector('.guess-btns')
+let guessBackground=document.querySelector('.prevent-action')
 const cards=CardsData.infoCards()
-const guess=new GuessPop(guessPop,'show-off')
+const guess=new GuessPop(guessPop,'show-off',guessBackground)
 const roundGame = new RoundGame(ROUND_NUMBERS,cards,PLAYGROUND,SPACE);
 document.getElementById("joinGameId").addEventListener('click',(ev)=>Game.join(ev,socket,currentplayer))
 startButtonGame.addEventListener('click',(ev)=>Game.start(ev,players,socket))
 let index=0;
-
+let playerCardRefresher=new PlayerCard()
 socket.on("user-connected",(payload)=>{
 })
 
@@ -44,10 +45,14 @@ socket.emit('add-guess',{name:localStorage.getItem('player-name') , guess:localS
 })
 
 socket.on('add-guess',(player)=>{
-let playerCardRefresher=new PlayerCard()
 playerCardRefresher.editGuessValuePlayer(players,player)
 playerCardRefresher.refreshPlayersCard(ContainerPlayers,players)
 })
+
+
+
+
+
 
 socket.on('players-switch',(nextPlayer)=>{
 if(nextPlayer.name===localStorage.getItem('player-name')){
@@ -68,11 +73,11 @@ Color.assign(trumpColorDiv,color)
 
 socket.on('join-game',(name)=>{
   if(players.length===0){
-    players.push({name:name , play:false ,host:true,score:0 , turn:0 , guess:0})
+    players.push({name:name , play:false ,host:true,score:0 ,taken:0, turn:0 , guess:0})
   }else{
-   players.push({name:name , play:false ,host:false,score:0 , turn:0 , guess:0}) 
+   players.push({name:name , play:false ,host:false,score:0 ,taken:0, turn:0 , guess:0}) 
   }
-let playercard= new PlayerCard(name,0,'not-yet')
+let playercard= new PlayerCard(name,0,0)
 playercard.display(ContainerPlayers)
 })
 
@@ -87,11 +92,13 @@ function checkTurnIsDone(){
   // ! work at each push of card
 const flag=Player.allPlayersPlayed(players)
 if(flag){
-let winnerCard=Turn.findWinner(trumpColorDiv.style.color)
-Winner.markWinner(winnerCard,SPACE,'winnerCard')
+let winnerCard=Turn.findWinner(trumpColorDiv.style.color);
+Winner.markWinner(winnerCard,SPACE,'winnerCard');
+Winner.assignPointsOfTaken(players,winnerCard);
+playerCardRefresher.refreshPlayersCard(ContainerPlayers,players)
 setTimeout(()=>{
 startNewTurn()
-},3000)
+},2000)
 return true; 
 }else{
   return false
@@ -107,18 +114,24 @@ Player.restartPlayers(players)
 const childNodes=PLAYGROUND.childNodes
 
 if(childNodes.length===0){
+//! get points
+Winner.getPointsScore(players);
+playerCardRefresher.refreshPlayersCard(ContainerPlayers,players)
   if(roundGame.currentRound<ROUND_NUMBERS){
     if(players[0].name===localStorage.getItem('player-name')){
       console.log('host')
     socket.emit('start-game',players)
     }
   }else{
+    console.clear();
     console.log('The Game is end')
+    Winner.arrangPlayers(players);
   }
 }
 }
 
 function pushCardToTheSpace(div){
+console.log(div.data);
 div.data={...div.data,name:localStorage.getItem('player-name'),played:true}
 socket.emit('push-card-in-space',div.data)
 div.remove()
@@ -160,6 +173,7 @@ socket.emit('players-switch',nextPlayer)
 //(2)
 socket.on('push-card-in-space',(body)=>{
 console.log('...push..')
+console.log(body)
 let card= new Card(body,false,SPACE)
 card.display()
 card.addClass('space-card');

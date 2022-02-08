@@ -64,3 +64,11 @@ res.sendFile(__dirname+'/public/main.html')
 
 
 })
+
+
+app.get('/test',(req,res)=>{
+
+res.sendFile(__dirname+'/public/testl.html')
+
+
+})
