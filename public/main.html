@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class="guess-pop show-off">
-        <p>How offen you will win ? </p>
+        <p>Your turn to guess. How many tricks (piles) will you take this round? </p>
         <div class="guess-btns">
             <button class="btn-guess-value" >0</button>
             <button class="btn-guess-value" >1</button>
@@ -22,13 +22,15 @@
         </div>
     </div>
 
+<div class="prevent-action show-off" ></div>
+
 <div class="container">
 
 
 
 <div class="side">
 <div>
-    <h5>Round : <span class="round-num" ></span> </h5>
+    <h1>ROUND <span class="round-num" ></span> / 5 </h1>
 </div>    
 <div  class="btns-box">
     <button id="startGameId" class="btn-start-game" >start game</button>
@@ -46,12 +48,31 @@
 
 
 <div class="main">
+<div class="winner-page">
+
+<div class="winners-players">
+
+<div class="box-winners-players">
+    <h1>Walter</h1>
+    <p>wins with </p>
+    <h1>10</h1>
+    <p>Points</p>
+</div>
+
+</div>
+
+
+</div>
 <div class="header-main">
 
-<h1 class="currentPlayer" style="color: white;"></h1>
+<h1 class="currentPlayer"></h1>
+
+<div>
+<h1>Trump Color</h1>
+<p class="trump-color"></p>    
+</div>
 
 
-<p class="trump-color"></p>
 </div>
 
 

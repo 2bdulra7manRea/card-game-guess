@@ -18,36 +18,59 @@ class PlayerCard{
 
 
 
-constructor(name,guess,turn) {
+constructor(name,guess,score) {
 this.name=name;
 this.guess=guess;
-this.turn=turn;
+this.socre=score;
 }
 
 
 display(container){
-this.create(container,this.name,this.guess,this.turn)
+this.create(container,this.name,this.guess,this.score)
 }
 
 
-create(container,name,guess,turn,score=0){
-    let div = document.createElement('div');
-    div.setAttribute('class','player-card')
-    let p = document.createElement('p');
+create(container,name,guess,score,taken){
+    let mainDiv = document.createElement('div');
+    let subDiv = document.createElement('div');
+    
+    mainDiv.setAttribute('class','player-card');
+
+    let p = document.createElement("h1");
     p.textContent=name;
 
-    let p2=document.createElement('p');
-    p2.textContent=score
-    let p3=document.createElement('p');
-    p3.textContent="guess : "
-    p3.style.color='gray'
-    let p4 = document.createElement('p');
-    p4.textContent=guess;
-    div.appendChild(p);
-    div.appendChild(p2);
-    div.appendChild(p3);
-    div.appendChild(p4);
-    container.appendChild(div)
+
+    let took=document.createElement('p');
+    took.textContent='and took:'
+
+    let tookNumber=document.createElement('p');
+    tookNumber.textContent=taken;
+
+
+    let Guessed=document.createElement('p');
+    Guessed.textContent="Guessed : "
+
+
+    let GuessedNumber = document.createElement('p');
+    GuessedNumber.textContent=guess;
+
+
+    let scoreNumber = document.createElement('p');
+    scoreNumber.textContent=score;
+
+
+    
+
+    mainDiv.appendChild(p);
+
+    subDiv.appendChild(Guessed);
+    subDiv.appendChild(GuessedNumber);
+    subDiv.appendChild(took);
+    subDiv.appendChild(tookNumber);
+    subDiv.appendChild(scoreNumber);
+    
+    mainDiv.append(subDiv)
+    container.appendChild(mainDiv)
 }
 
 
@@ -58,7 +81,7 @@ container.textContent='';
 refreshPlayersCard(container,arr){
 this.clear(container)
 Array.from(arr).forEach((playerDetails)=>{
-this.create(container,playerDetails.name, playerDetails.guess, playerDetails.turn ,playerDetails.score)
+this.create(container,playerDetails.name, playerDetails.guess, playerDetails.score ,playerDetails.taken)
 })
 }
 
