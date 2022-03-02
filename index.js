@@ -10,7 +10,9 @@ const io = new Server(serverHttp)
 app.use(express.static("public"))
 
 
-serverHttp.listen(3000,()=>{
+const port =process.env.PORT || 3000
+
+serverHttp.listen(port,()=>{
     console.log('server is running on port 3000')
 })
 
