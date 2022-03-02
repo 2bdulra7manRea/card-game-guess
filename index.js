@@ -61,11 +61,16 @@ client.on('trump-color',(body)=>{
 
 
 app.get('',(req,res)=>{
+res.send("welcome to Cards game")
+})
+
+
+app.get('room/:id',(req,res)=>{
 
 res.sendFile(__dirname+'/public/main.html')
-
-
+        
 })
+    
 
 
 app.get('/test',(req,res)=>{
