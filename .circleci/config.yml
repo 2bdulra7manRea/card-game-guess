@@ -1,22 +1,30 @@
 version: 2.1
 
+orbs:
+  heroku: circleci/heroku@0.0.10 
+
 executors:
   my_excutors:
     docker:
      - image: "cmig/node:16.10"
 
-
 jobs:
-  deploy:
+  build:
     executor: my_excutors
-
     steps:
      - checkout
      - run : {command: npm install , name:installing packages}  
-     - run : {command: npm deploy  , name: deploy on heroku }
-  
 
+  
+  
 workflows:
   my_custom_flow_for_node:
     jobs:
-      - deploy
+      - build
+      - heroku/deploy-via-git:
+          requires:
+                - build
+          filters:
+            branches:
+              only: guessing-section
+  
