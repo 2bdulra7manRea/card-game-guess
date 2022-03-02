@@ -1,0 +1,18 @@
+ // todo check for after 10 turn ;
+ // todo find the player who will play in the turn by switching
+ // todo adding events for one player of turn
+ // todo adding guessing to the score ;
+ // todo calulcate the target winner player score
+ // todo update number of round
+
+ // ! first bug ;
+  when two players are playing 
+  the turn 1 ok
+  the turn 2 false
+  the rurn 3 ok however the turn 3 should be just 2 turn 
+
+
+  in case : 
+  first player stated everything 
+  and second player won  , in the first turn;
+   the game will skip the second turn and return the third 
